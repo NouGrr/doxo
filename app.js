@@ -31,10 +31,12 @@ async function runBusy(label, action) {
 function updateControls() {
   const hasDocument = state.pages.length > 0;
   $('undo').disabled = state.history.length === 0; $('redo').disabled = state.future.length === 0;
-  ['export', 'merge', 'addPage', 'fit', 'zoomIn', 'zoomOut'].forEach(id => { $(id).disabled = !hasDocument; });
+  ['export', 'addPage', 'fit', 'zoomIn', 'zoomOut'].forEach(id => { $(id).disabled = !hasDocument; });
   document.querySelectorAll('.document-control').forEach(button => { button.disabled = !hasDocument; });
-  $('deletePage').disabled = state.pages.length < 2;
-  $('deletePage').title = state.pages.length === 1 ? 'Le PDF doit conserver au moins une page.' : 'Supprimer la page sélectionnée';
+  ['deletePage', 'deletePageSidebar'].forEach(id => {
+    $(id).disabled = state.pages.length < 2;
+    $(id).title = state.pages.length === 1 ? 'Le PDF doit conserver au moins une page.' : 'Supprimer la page sélectionnée';
+  });
   document.querySelectorAll('.page-thumb').forEach(button => {
     const active = button.dataset.pageId === current()?.id;
     button.classList.toggle('active', active); button.setAttribute('aria-current', active ? 'page' : 'false');
@@ -426,9 +428,7 @@ async function createDemo() {
 function bindEvents() {
   ['open', 'choose'].forEach(id => { $(id).onclick = () => $('fileInput').click(); });
   $('fileInput').onchange = async event => { await openFile(event.target.files[0]); event.target.value = ''; };
-  $('merge').onclick = () => $('mergeInput').click();
   $('addPage').onclick = addBlankPage;
-  $('mergeInput').onchange = async event => { await openFile(event.target.files[0], !!current()); event.target.value = ''; };
   $('demo').onclick = createDemo; $('export').onclick = exportDocument;
   $('undo').onclick = () => historyMove(); $('redo').onclick = () => historyMove(true);
   document.querySelectorAll('[data-tool]').forEach(button => { button.onclick = () => setTool(button.dataset.tool); });
@@ -438,6 +438,7 @@ function bindEvents() {
   $('rotateLeft').onclick = () => rotate(-90); $('rotateRight').onclick = () => rotate(90);
   $('moveUp').onclick = () => movePage(-1); $('moveDown').onclick = () => movePage(1);
   $('deletePage').onclick = () => deletePdfPage(current()?.id);
+  $('deletePageSidebar').onclick = () => deletePdfPage(current()?.id);
   $('deleteAnnotation').onclick = deleteSelected;
   $('annotationCanvas').addEventListener('pointerdown', onPointerDown);
   $('annotationCanvas').addEventListener('pointermove', onPointerMove);

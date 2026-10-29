@@ -45,7 +45,7 @@
     <aside class="pages-sidebar">
       <div class="sidebar-heading"><h2>Pages</h2><span id="pageCount" class="count">0</span></div>
       <div id="pageList" class="page-list"><div class="pages-empty"><span>▤</span><p>Vos pages<br>apparaîtront ici</p></div></div>
-      <div class="add-pages"><button class="secondary-button" id="addPage" disabled>＋ Page vierge</button><button class="secondary-button" id="merge" disabled>＋ Ajouter un PDF</button></div>
+      <div class="add-pages"><button class="secondary-button" id="addPage" disabled>＋ Page vierge</button><button class="secondary-button document-control" id="deletePageSidebar" disabled>− Supprimer cette page</button></div>
     </aside>
     <section class="canvas-area" aria-label="Document PDF">
       <div class="canvas-toolbar">
@@ -92,7 +92,6 @@
   </main>
 </div>
 <input type="file" id="fileInput" accept="application/pdf,.pdf" hidden>
-<input type="file" id="mergeInput" accept="application/pdf,.pdf" hidden>
 <input type="file" id="imageInput" accept="image/png,image/jpeg" hidden>
 <div class="busy" id="busy" hidden role="status"><span>✦</span><p id="busyText">Ouverture du document…</p></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

@@ -16,7 +16,7 @@ Télécharger ce dépôt, extraire son contenu, puis **ouvrir `index.html` dans 
 
 1. Ouvrir le PDF avec **Ouvrir un PDF** ou le glisser dans l’espace central.
 2. Choisir **Modifier**, cliquer sur un bloc de texte encadré, modifier son contenu dans le panneau puis cliquer sur **Appliquer le texte**.
-3. Utiliser **Page vierge** pour insérer une page après la page sélectionnée, **Ajouter un PDF** pour assembler des documents, ou cliquer sur la **corbeille de la miniature** pour supprimer une page. Le bouton **Supprimer cette page** est également disponible dans le panneau de droite. Le PDF doit conserver au moins une page.
+3. Dans le volet Pages, utiliser **＋ Page vierge** pour insérer une page après la page sélectionnée ou **− Supprimer cette page** pour la retirer. La corbeille de chaque miniature permet aussi de supprimer une page. Le PDF doit conserver au moins une page.
 4. Cliquer sur **Exporter** pour télécharger le PDF modifié. Les actions peuvent être annulées avec la flèche ↶.
 
 ## Fonctionnalités
@@ -26,7 +26,7 @@ Télécharger ce dépôt, extraire son contenu, puis **ouvrir `index.html` dans 
 - Ajout de textes multilignes, taille, gras et couleur.
 - Dessin libre, surlignage transparent, rectangles, images PNG/JPEG.
 - Sélection, déplacement et suppression des annotations.
-- Ajout de pages vierges au format de la page courante, rotation, déplacement et suppression de pages, assemblage de plusieurs PDF.
+- Ajout de pages vierges au format de la page courante, rotation, déplacement et suppression de pages.
 - Annuler/rétablir, zoom, ajustement à l’écran.
 - Export PDF qui conserve les pages d’origine et ajoute les annotations en surimpression.
 - Interface adaptée aux écrans mobiles, libellés accessibles, raccourcis clavier.
