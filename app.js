@@ -31,11 +31,14 @@ async function runBusy(label, action) {
 function updateControls() {
   const hasDocument = state.pages.length > 0;
   $('undo').disabled = state.history.length === 0; $('redo').disabled = state.future.length === 0;
-  ['export', 'addPage', 'fit', 'zoomIn', 'zoomOut'].forEach(id => { $(id).disabled = !hasDocument; });
+  ['export', 'addPage', 'fit', 'zoomIn', 'zoomOut'].forEach(id => {
+    const button = $(id);
+    if (button) button.disabled = !hasDocument;
+  });
   document.querySelectorAll('.document-control').forEach(button => { button.disabled = !hasDocument; });
-  ['deletePage', 'deletePageSidebar'].forEach(id => {
-    $(id).disabled = state.pages.length < 2;
-    $(id).title = state.pages.length === 1 ? 'Le PDF doit conserver au moins une page.' : 'Supprimer la page sélectionnée';
+  document.querySelectorAll('[data-action="delete-page"]').forEach(button => {
+    button.disabled = state.pages.length < 2;
+    button.title = state.pages.length === 1 ? 'Le PDF doit conserver au moins une page.' : 'Supprimer la page sélectionnée';
   });
   document.querySelectorAll('.page-thumb').forEach(button => {
     const active = button.dataset.pageId === current()?.id;
@@ -437,8 +440,9 @@ function bindEvents() {
   $('zoomIn').onclick = () => zoom(1.2); $('zoomOut').onclick = () => zoom(1 / 1.2);
   $('rotateLeft').onclick = () => rotate(-90); $('rotateRight').onclick = () => rotate(90);
   $('moveUp').onclick = () => movePage(-1); $('moveDown').onclick = () => movePage(1);
-  $('deletePage').onclick = () => deletePdfPage(current()?.id);
-  $('deletePageSidebar').onclick = () => deletePdfPage(current()?.id);
+  document.querySelectorAll('[data-action="delete-page"]').forEach(button => {
+    button.onclick = () => deletePdfPage(current()?.id);
+  });
   $('deleteAnnotation').onclick = deleteSelected;
   $('annotationCanvas').addEventListener('pointerdown', onPointerDown);
   $('annotationCanvas').addEventListener('pointermove', onPointerMove);
