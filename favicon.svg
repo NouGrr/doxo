@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#c28cff"/><stop offset="1" stop-color="#83d9ff"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="#151927"/><path d="M32 10 38 26 54 32 38 38 32 54 26 38 10 32 26 26Z" fill="url(#g)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="pixo-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c28cff"/>
+      <stop offset="1" stop-color="#83d9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#171b29"/>
+  <rect x="7" y="7" width="50" height="50" rx="13" fill="url(#pixo-gradient)"/>
+  <path fill="#171322" d="m32 14 3.8 12.2L48 30l-12.2 3.8L32 46l-3.8-12.2L16 30l12.2-3.8L32 14Z"/>
+</svg>
