@@ -1,12 +1,12 @@
 # Doxo — L’atelier PDF
 
-Éditeur PDF en français, réalisé dans la continuité graphique de [Pixo](https://github.com/NouGrr/pixo-editor) : fond `#10131d`, panneaux `#1b2030`, violet `#c28cff` et cyan.
+Éditeur PDF en français pour modifier, annoter et organiser vos documents directement dans votre navigateur.
 
 ## Application
 
 **[Ouvrir Doxo →](https://nougrr.github.io/doxo/)**
 
-Un éditeur PDF gratuit, sans compte, avec le même esprit graphique que [Pixo](https://nougrr.github.io/pixo-editor/).
+Un éditeur PDF gratuit, sans compte, qui traite vos documents sur votre appareil.
 
 ## Utiliser en local
 
