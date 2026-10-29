@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10131d">
+  <meta name="description" content="Doxo, votre atelier PDF. Annotez, dessinez et organisez vos documents, directement dans votre navigateur.">
+  <title>Doxo — L’atelier PDF</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Local files cannot fetch workers/fonts through HTTP. Load bundled equivalents as scripts.
+    if (location.protocol === 'file:') {
+      document.write('<script src="vendor/pdf.worker.min.js"><\/script><script src="vendor/pdf-assets.js"><\/script>');
+    }
+  </script>
+  <script defer src="vendor/pdf.min.js"></script>
+  <script defer src="vendor/pdf-lib.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Doxo, accueil"><span class="brand-mark">✦</span>Doxo<span class="brand-tag">PDF EDITOR</span></a>
+    <span class="document-name" id="documentName">Votre prochain document commence ici</span>
+    <div class="top-actions">
+      <button class="icon-button" id="undo" title="Annuler (⌘/Ctrl Z)" aria-label="Annuler" disabled>↶</button>
+      <button class="icon-button" id="redo" title="Rétablir (⌘/Ctrl Maj Z)" aria-label="Rétablir" disabled>↷</button>
+      <span class="action-divider"></span>
+      <button class="secondary-button open-file" id="open">Ouvrir un PDF</button>
+      <button class="primary-button" id="export" disabled><span>↓</span> Exporter <span class="export-format">PDF</span></button>
+    </div>
+  </header>
+  <main class="workspace">
+    <nav class="tool-rail" aria-label="Outils d’édition">
+      <button class="rail-tool active" data-tool="select" aria-pressed="true" title="Sélectionner (V)"><span>↖</span><small>Sélection</small></button>
+      <button class="rail-tool" data-tool="edit" aria-pressed="false" title="Modifier le texte existant (E)"><span>✎</span><small>Modifier</small></button>
+      <button class="rail-tool" data-tool="text" aria-pressed="false" title="Ajouter du texte (T)"><span class="text-icon">T</span><small>Texte</small></button>
+      <button class="rail-tool" data-tool="draw" aria-pressed="false" title="Dessiner (D)"><span>⌁</span><small>Dessin</small></button>
+      <button class="rail-tool" data-tool="highlight" aria-pressed="false" title="Surligner (H)"><span>▱</span><small>Surligner</small></button>
+      <button class="rail-tool" data-tool="rectangle" aria-pressed="false" title="Rectangle (R)"><span>□</span><small>Formes</small></button>
+      <button class="rail-tool" data-tool="image" aria-pressed="false" title="Ajouter une image"><span>▧</span><small>Image</small></button>
+      <div class="rail-bottom"><span class="local-dot"></span><small>100 % local</small></div>
+    </nav>
+    <aside class="pages-sidebar">
+      <div class="sidebar-heading"><h2>Pages</h2><span id="pageCount" class="count">0</span></div>
+      <div id="pageList" class="page-list"><div class="pages-empty"><span>▤</span><p>Vos pages<br>apparaîtront ici</p></div></div>
+      <div class="add-pages"><button class="secondary-button" id="addPage" disabled>＋ Page vierge</button><button class="secondary-button" id="merge" disabled>＋ Ajouter un PDF</button></div>
+    </aside>
+    <section class="canvas-area" aria-label="Document PDF">
+      <div class="canvas-toolbar">
+        <div class="toolbar-group"><span class="status-dot"></span><span id="canvasHint">Un espace pour vos idées</span></div>
+        <div class="toolbar-group zoom-controls"><button class="icon-button compact" id="zoomOut" aria-label="Dézoomer" disabled>−</button><button class="plain-button" id="fit" title="Ajuster à l’écran" disabled><span id="zoomValue">100 %</span>⌄</button><button class="icon-button compact" id="zoomIn" aria-label="Zoomer" disabled>＋</button></div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="welcome" id="welcome">
+          <div class="welcome-art" aria-hidden="true"><div class="paper-back"></div><div class="paper-front"><span class="paper-label">PDF</span><i></i><i></i><i></i><div class="paper-highlight"></div><span class="paper-spark">✦</span></div><span class="art-orbit">＋</span></div>
+          <p class="eyebrow">VOTRE ATELIER PDF</p>
+          <h1>Vos documents.<br><span>Votre touche.</span></h1>
+          <p class="welcome-description">Un mot à ajouter, une idée à surligner,<br>des pages à réorganiser. Faites-le simplement.</p>
+          <div class="dropzone" id="dropzone"><button class="primary-button" id="choose"><span>＋</span> Choisir un PDF</button><p>ou glissez votre document ici</p><small>PDF · traitement sur votre appareil</small></div>
+          <button class="demo-button" id="demo">Juste un aperçu ? <span>Essayer un document ↗</span></button>
+          <div class="privacy-note"><span>◇</span> Vos fichiers restent entre vos mains.</div>
+        </div>
+        <div class="page-frame" id="pageFrame" hidden><canvas id="pdfCanvas"></canvas><canvas id="annotationCanvas" aria-label="Zone d’annotation du PDF" tabindex="0"></canvas></div>
+      </div>
+      <footer class="stage-footer"><span id="documentInfo">Aucun document ouvert</span><span id="saveState">Sans compte. Sans envoi.</span></footer>
+    </section>
+    <aside class="inspector">
+      <div class="inspector-heading"><div><p class="eyebrow">ÉDITION</p><h2 id="panelTitle">L’essentiel, à portée de main.</h2></div><span class="inspector-spark">✦</span></div>
+      <div class="panel">
+        <div id="selectPanel" class="tool-panel">
+          <p class="section-title">Votre document, en mieux</p>
+          <p class="help-text">Ouvrez un PDF, choisissez un outil et laissez vos idées prendre place.</p>
+          <div class="feature-item"><span class="feature-icon violet">T</span><div><b>Ajoutez votre voix</b><small>Texte, notes et annotations</small></div></div>
+          <div class="feature-item"><span class="feature-icon blue">⌁</span><div><b>Tracez vos idées</b><small>Dessin libre et surlignage</small></div></div>
+          <div class="feature-item"><span class="feature-icon cyan">▤</span><div><b>Trouvez le bon ordre</b><small>Déplacez, tournez, assemblez</small></div></div>
+          <div class="tip-card"><span>↖</span><p>Cliquez sur une annotation pour la sélectionner, puis faites-la glisser pour la déplacer.</p></div>
+        </div>
+        <div id="textPanel" class="tool-panel" hidden><label for="textInput">Votre texte</label><textarea id="textInput" rows="4" placeholder="Écrivez quelque chose…">Votre texte</textarea><p class="help-text" id="textHelp">Cliquez sur la page pour ajouter votre texte.</p><button id="applyText" class="primary-button full-width" hidden>Appliquer le texte</button><label id="backgroundLabel" for="backgroundColor" hidden>Fond du bloc <input type="color" id="backgroundColor" value="#ffffff"></label><label for="fontSize">Taille du texte <output id="fontSizeValue">18 pt</output></label><input id="fontSize" type="range" min="8" max="72" value="18"><label class="checkbox-label"><input type="checkbox" id="bold"> Texte en gras</label></div>
+        <div id="drawPanel" class="tool-panel" hidden><p class="section-title" id="drawingTitle">Dessin libre</p><p class="help-text" id="drawingHelp">Cliquez et faites glisser sur la page pour dessiner.</p><label for="strokeSize">Épaisseur <output id="strokeSizeValue">3 pt</output></label><input id="strokeSize" type="range" min="1" max="20" value="3"></div>
+        <div id="imagePanel" class="tool-panel" hidden><p class="section-title">Une image dans votre PDF</p><p class="help-text">Importez une image PNG ou JPEG, puis cliquez sur la page pour la placer.</p><button class="secondary-button full-width" id="chooseImage">Choisir une image</button><label for="imageWidth">Largeur <output id="imageWidthValue">180 pt</output></label><input id="imageWidth" type="range" min="30" max="500" value="180"><p id="imageName" class="help-text">Aucune image sélectionnée</p></div>
+        <div id="colorPanel" hidden><div class="divider"></div><label for="color">Couleur <input type="color" id="color" value="#9c64e8"></label><div class="swatches"><button data-color="#9c64e8" style="--swatch:#9c64e8" aria-label="Violet"></button><button data-color="#3275e6" style="--swatch:#3275e6" aria-label="Bleu"></button><button data-color="#15b9c8" style="--swatch:#15b9c8" aria-label="Cyan"></button><button data-color="#f4ce4e" style="--swatch:#f4ce4e" aria-label="Jaune"></button><button data-color="#e86e87" style="--swatch:#e86e87" aria-label="Rose"></button><button data-color="#171b29" style="--swatch:#171b29" aria-label="Noir"></button></div></div>
+        <div id="selectionPanel" hidden><div class="divider"></div><p class="section-title">Annotation sélectionnée</p><p class="help-text">Déplacez-la sur la page. Pour un texte, modifiez son contenu avec l’outil Texte.</p><button class="secondary-button full-width danger" id="deleteAnnotation">Supprimer l’annotation</button></div>
+        <div class="divider"></div>
+        <div class="section-title">Organiser la page <span id="currentPage" class="muted">—</span></div>
+        <div class="transform-grid"><button class="secondary-button document-control" id="rotateLeft" disabled>↶ Rotation −90°</button><button class="secondary-button document-control" id="rotateRight" disabled>↷ Rotation +90°</button><button class="secondary-button document-control" id="moveUp" disabled>↑ Déplacer avant</button><button class="secondary-button document-control" id="moveDown" disabled>↓ Déplacer après</button></div>
+        <button class="plain-button delete-page document-control" id="deletePage" disabled>Supprimer cette page</button>
+      </div>
+      <div class="inspector-footer"><span>✦</span><div>De la famille Pixo.<small>Le même esprit. De nouvelles possibilités.</small></div><a href="https://nougrr.github.io/pixo-editor/" target="_blank" rel="noopener" aria-label="Découvrir Pixo">↗</a></div>
+    </aside>
+  </main>
+</div>
+<input type="file" id="fileInput" accept="application/pdf,.pdf" hidden>
+<input type="file" id="mergeInput" accept="application/pdf,.pdf" hidden>
+<input type="file" id="imageInput" accept="image/png,image/jpeg" hidden>
+<div class="busy" id="busy" hidden role="status"><span>✦</span><p id="busyText">Ouverture du document…</p></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="confirmDialog"><form method="dialog"><p class="eyebrow">NOUVEAU DOCUMENT</p><h2>Ouvrir un autre PDF ?</h2><p>Les modifications non exportées du document actuel seront perdues.</p><div class="dialog-actions"><button value="cancel" class="secondary-button">Annuler</button><button value="confirm" class="primary-button">Ouvrir le PDF</button></div></form></dialog>
+</body>
+</html>
