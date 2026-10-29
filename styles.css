@@ -9,3 +9,5 @@
 .add-pages{display:flex;flex-direction:column;gap:8px}.add-pages button{width:100%}
 @media(max-width:900px){.add-pages{flex-direction:row;gap:6px}.add-pages button{width:auto;font-size:9px;padding:7px 8px}.tool-rail{overflow-x:auto}}
 @media(max-width:650px){.rail-tool{min-width:54px}.tool-rail{flex-shrink:0}.rail-tool small{font-size:7px}}
+.page-item{position:relative;width:100%;margin-bottom:18px;flex-shrink:0}.page-item .page-thumb{margin-bottom:0}.delete-thumb{position:absolute;top:3px;right:1px;width:28px;height:28px;display:grid;place-items:center;border:1px solid #6f4a60;border-radius:7px;background:#252030;color:#f2a1b5;box-shadow:0 2px 8px #0005}.delete-thumb:hover:not(:disabled){background:#542c40;border-color:#ee93ae}.delete-thumb:disabled{opacity:.4}.delete-page{border:1px solid #74465b;background:#e86e8710;color:#f2a1b5;width:100%;padding:10px;font-size:10px}.delete-page:hover:not(:disabled){background:#e86e8725}
+@media(max-width:900px){.page-item{width:76px;min-width:76px;margin:0}.page-item .page-thumb{width:76px;min-width:76px;padding-top:14px}.delete-thumb{top:0;right:0;width:28px;height:28px}}

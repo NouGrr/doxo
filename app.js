@@ -34,6 +34,11 @@ function updateControls() {
   ['export', 'merge', 'addPage', 'fit', 'zoomIn', 'zoomOut'].forEach(id => { $(id).disabled = !hasDocument; });
   document.querySelectorAll('.document-control').forEach(button => { button.disabled = !hasDocument; });
   $('deletePage').disabled = state.pages.length < 2;
+  $('deletePage').title = state.pages.length === 1 ? 'Le PDF doit conserver au moins une page.' : 'Supprimer la page sélectionnée';
+  document.querySelectorAll('.page-thumb').forEach(button => {
+    const active = button.dataset.pageId === current()?.id;
+    button.classList.toggle('active', active); button.setAttribute('aria-current', active ? 'page' : 'false');
+  });
   $('moveUp').disabled = !hasDocument || state.current === 0;
   $('moveDown').disabled = !hasDocument || state.current === state.pages.length - 1;
   $('pageCount').textContent = state.pages.length;
@@ -144,14 +149,27 @@ async function renderThumbnails() {
   for (let index = 0; index < state.pages.length; index++) {
     if (generation !== thumbnailGeneration) return;
     const model = state.pages[index];
+    const wrapper = document.createElement('div'); wrapper.className = 'page-item';
     const button = document.createElement('button'); button.className = `page-thumb${index === state.current ? ' active' : ''}`;
+    button.dataset.pageId = model.id;
     button.setAttribute('aria-label', `Afficher la page ${index + 1}`); button.setAttribute('aria-current', index === state.current ? 'page' : 'false');
     const paper = document.createElement('span'); paper.className = 'thumb-paper';
     const canvas = document.createElement('canvas'); paper.append(canvas);
     const label = document.createElement('span'); label.textContent = `${String(index + 1).padStart(2, '0')}${model.annotations.length ? ' · modifiée' : ''}`;
     button.append(paper, label);
-    button.addEventListener('click', () => { state.current = index; state.selected = null; state.fit = true; renderPage().catch(error => notify(error.message, true)); document.querySelectorAll('.page-thumb').forEach((item, i) => { item.classList.toggle('active', i === index); item.setAttribute('aria-current', i === index ? 'page' : 'false'); }); });
-    $('pageList').append(button);
+    button.addEventListener('click', () => {
+      const target = state.pages.findIndex(page => page.id === model.id);
+      if (target < 0 || state.busy) return;
+      state.current = target; state.selected = null; state.fit = true; updateControls();
+      renderPage().catch(error => notify(error.message, true));
+    });
+    const remove = document.createElement('button'); remove.className = 'delete-thumb'; remove.dataset.pageId = model.id;
+    remove.setAttribute('aria-label', `Supprimer la page ${index + 1}`);
+    remove.disabled = state.pages.length < 2;
+    remove.title = remove.disabled ? 'Le PDF doit conserver au moins une page.' : `Supprimer la page ${index + 1}`;
+    remove.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>';
+    remove.addEventListener('click', () => deletePdfPage(model.id));
+    wrapper.append(button, remove); $('pageList').append(wrapper);
     try {
       const page = await getPage(model);
       if (generation !== thumbnailGeneration) return;
@@ -305,6 +323,21 @@ async function movePage(direction) {
   const target = state.current + direction; if (target < 0 || target >= state.pages.length) return;
   checkpoint(); [state.pages[state.current], state.pages[target]] = [state.pages[target], state.pages[state.current]]; state.current = target; changed(); await renderPage(); renderThumbnails();
 }
+async function deletePdfPage(pageId) {
+  if (state.busy) return;
+  if (state.pages.length < 2) return notify('Le PDF doit conserver au moins une page.');
+  const index = state.pages.findIndex(page => page.id === pageId);
+  if (index < 0) return;
+  await runBusy('Suppression de la page…', async () => {
+    const selectedId = current()?.id;
+    checkpoint(); state.pages.splice(index, 1);
+    const selectedIndex = state.pages.findIndex(page => page.id === selectedId);
+    state.current = selectedIndex >= 0 ? selectedIndex : Math.min(index, state.pages.length - 1);
+    state.selected = null; state.fit = true; changed();
+    await renderPage(); renderThumbnails();
+    notify(`Page ${index + 1} supprimée. Annulez avec ↶ ou exportez pour enregistrer le PDF.`);
+  });
+}
 async function addBlankPage() {
   if (!current()) return;
   await runBusy('Ajout d’une page vierge…', async () => {
@@ -404,7 +437,7 @@ function bindEvents() {
   $('zoomIn').onclick = () => zoom(1.2); $('zoomOut').onclick = () => zoom(1 / 1.2);
   $('rotateLeft').onclick = () => rotate(-90); $('rotateRight').onclick = () => rotate(90);
   $('moveUp').onclick = () => movePage(-1); $('moveDown').onclick = () => movePage(1);
-  $('deletePage').onclick = async () => { if (state.pages.length < 2) return; checkpoint(); state.pages.splice(state.current, 1); state.current = Math.min(state.current, state.pages.length - 1); state.selected = null; changed(); await renderPage(); renderThumbnails(); notify('Page supprimée. Vous pouvez annuler avec ↶.'); };
+  $('deletePage').onclick = () => deletePdfPage(current()?.id);
   $('deleteAnnotation').onclick = deleteSelected;
   $('annotationCanvas').addEventListener('pointerdown', onPointerDown);
   $('annotationCanvas').addEventListener('pointermove', onPointerMove);

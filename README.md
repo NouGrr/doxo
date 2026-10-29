@@ -16,7 +16,7 @@ Télécharger ce dépôt, extraire son contenu, puis **ouvrir `index.html` dans 
 
 1. Ouvrir le PDF avec **Ouvrir un PDF** ou le glisser dans l’espace central.
 2. Choisir **Modifier**, cliquer sur un bloc de texte encadré, modifier son contenu dans le panneau puis cliquer sur **Appliquer le texte**.
-3. Utiliser **Page vierge** pour insérer une page après la page sélectionnée, **Ajouter un PDF** pour assembler des documents, ou **Supprimer cette page** dans le panneau de droite.
+3. Utiliser **Page vierge** pour insérer une page après la page sélectionnée, **Ajouter un PDF** pour assembler des documents, ou cliquer sur la **corbeille de la miniature** pour supprimer une page. Le bouton **Supprimer cette page** est également disponible dans le panneau de droite. Le PDF doit conserver au moins une page.
 4. Cliquer sur **Exporter** pour télécharger le PDF modifié. Les actions peuvent être annulées avec la flèche ↶.
 
 ## Fonctionnalités
