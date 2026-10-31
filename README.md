@@ -39,6 +39,10 @@ Les fichiers restent dans le navigateur. Les bibliothèques sont incluses dans `
 
 `E` modifier le texte existant · `V` sélection · `T` texte · `D` dessin · `H` surlignage · `R` rectangle · `Suppr` supprimer l’annotation · `Échap` désélectionner · `⌘/Ctrl Z` annuler · `⌘/Ctrl Maj Z` rétablir · `⌘/Ctrl S` exporter.
 
+## Identité visuelle
+
+Doxo reprend la charte de [NEXO](https://nougrr.github.io/nexo/) : fond anthracite, accents lavande et cyan, DM Sans et Space Mono. Le cyan identifie l’atelier PDF. Les polices sont incluses dans `vendor/fonts/` avec leurs licences SIL Open Font License pour préserver le fonctionnement hors ligne.
+
 ## Bibliothèques
 
 - PDF.js 3.11.174 — Apache-2.0, rendu des documents.

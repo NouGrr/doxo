@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#10131d">
+  <meta name="theme-color" content="#101116">
   <meta name="description" content="Doxo, votre atelier PDF. Annotez, dessinez et organisez vos documents, directement dans votre navigateur.">
   <title>Doxo — L’atelier PDF</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css?v=e909b13111cf">
+  <link rel="stylesheet" href="styles.css?v=e7ccd7281eaf">
   <script>
     // Local files cannot fetch workers/fonts through HTTP. Load bundled equivalents as scripts.
     if (location.protocol === 'file:') {
@@ -16,12 +16,12 @@
   </script>
   <script defer src="vendor/pdf.min.js"></script>
   <script defer src="vendor/pdf-lib.min.js"></script>
-  <script defer src="app.js?v=e3eb014df02d"></script>
+  <script defer src="app.js?v=ff157c5ea0b0"></script>
 </head>
 <body>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="index.html" aria-label="Doxo, accueil"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m16 0 3.8 12.2L32 16l-12.2 3.8L16 32l-3.8-12.2L0 16l12.2-3.8Z"/></svg></span>Doxo<span class="brand-tag">PDF EDITOR</span></a>
+    <a class="brand" href="index.html" aria-label="Doxo, accueil"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="24" rx="2"/><path d="M11 11h10M11 16h10M11 21h6"/></svg></span>Doxo<span class="brand-tag">ATELIER PDF</span></a>
     <span class="document-name" id="documentName">Votre prochain document commence ici</span>
     <div class="top-actions">
       <button class="icon-button" id="undo" title="Annuler (⌘/Ctrl Z)" aria-label="Annuler" disabled>↶</button>
@@ -80,13 +80,13 @@
         <div id="textPanel" class="tool-panel" hidden><label for="textInput">Votre texte</label><textarea id="textInput" rows="4" placeholder="Écrivez quelque chose…">Votre texte</textarea><p class="help-text" id="textHelp">Cliquez sur la page pour ajouter votre texte.</p><button id="applyText" class="primary-button full-width" hidden>Appliquer le texte</button><label id="backgroundLabel" for="backgroundColor" hidden>Fond du bloc <input type="color" id="backgroundColor" value="#ffffff"></label><label for="fontSize">Taille du texte <output id="fontSizeValue">18 pt</output></label><input id="fontSize" type="range" min="8" max="72" value="18"><label class="checkbox-label"><input type="checkbox" id="bold"> Texte en gras</label></div>
         <div id="drawPanel" class="tool-panel" hidden><p class="section-title" id="drawingTitle">Dessin libre</p><p class="help-text" id="drawingHelp">Cliquez et faites glisser sur la page pour dessiner.</p><label for="strokeSize">Épaisseur <output id="strokeSizeValue">3 pt</output></label><input id="strokeSize" type="range" min="1" max="20" value="3"></div>
         <div id="imagePanel" class="tool-panel" hidden><p class="section-title">Une image dans votre PDF</p><p class="help-text">Importez une image PNG ou JPEG, puis cliquez sur la page pour la placer.</p><button class="secondary-button full-width" id="chooseImage">Choisir une image</button><label for="imageWidth">Largeur <output id="imageWidthValue">180 pt</output></label><input id="imageWidth" type="range" min="30" max="500" value="180"><p id="imageName" class="help-text">Aucune image sélectionnée</p></div>
-        <div id="colorPanel" hidden><div class="divider"></div><label for="color">Couleur <input type="color" id="color" value="#9c64e8"></label><div class="swatches"><button data-color="#9c64e8" style="--swatch:#9c64e8" aria-label="Violet"></button><button data-color="#3275e6" style="--swatch:#3275e6" aria-label="Bleu"></button><button data-color="#15b9c8" style="--swatch:#15b9c8" aria-label="Cyan"></button><button data-color="#f4ce4e" style="--swatch:#f4ce4e" aria-label="Jaune"></button><button data-color="#e86e87" style="--swatch:#e86e87" aria-label="Rose"></button><button data-color="#171b29" style="--swatch:#171b29" aria-label="Noir"></button></div></div>
+        <div id="colorPanel" hidden><div class="divider"></div><label for="color">Couleur <input type="color" id="color" value="#83d9ff"></label><div class="swatches"><button data-color="#9c64e8" style="--swatch:#9c64e8" aria-label="Violet"></button><button data-color="#3275e6" style="--swatch:#3275e6" aria-label="Bleu"></button><button data-color="#83d9ff" style="--swatch:#83d9ff" aria-label="Cyan"></button><button data-color="#f4ce4e" style="--swatch:#f4ce4e" aria-label="Jaune"></button><button data-color="#e86e87" style="--swatch:#e86e87" aria-label="Rose"></button><button data-color="#171b29" style="--swatch:#171b29" aria-label="Noir"></button></div></div>
         <div id="selectionPanel" hidden><div class="divider"></div><p class="section-title">Annotation sélectionnée</p><p class="help-text">Déplacez-la sur la page. Pour un texte, modifiez son contenu avec l’outil Texte.</p><button class="secondary-button full-width danger" id="deleteAnnotation">Supprimer l’annotation</button></div>
         <div class="divider"></div>
         <div class="section-title">Organiser la page <span id="currentPage" class="muted">—</span></div>
         <div class="transform-grid"><button class="secondary-button document-control" id="rotateLeft" disabled>↶ Rotation −90°</button><button class="secondary-button document-control" id="rotateRight" disabled>↷ Rotation +90°</button><button class="secondary-button document-control" id="moveUp" disabled>↑ Déplacer avant</button><button class="secondary-button document-control" id="moveDown" disabled>↓ Déplacer après</button></div>
       </div>
-      <div class="inspector-footer"><span>✦</span><div>De la famille Pixo.<small>Le même esprit. De nouvelles possibilités.</small></div><a href="https://nougrr.github.io/pixo-editor/" target="_blank" rel="noopener" aria-label="Découvrir Pixo">↗</a></div>
+      <div class="inspector-footer"><span>✦</span><div>Un outil de l’univers NEXO.<small>Tous vos outils. Un seul univers.</small></div><a href="https://nougrr.github.io/nexo/" target="_blank" rel="noopener" aria-label="Découvrir NEXO">↗</a></div>
     </aside>
   </main>
 </div>

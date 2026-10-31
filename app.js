@@ -221,13 +221,13 @@ function drawAnnotations() {
   const ratio = Math.min(window.devicePixelRatio || 1, 2); const matrix = new DOMMatrix().scale(ratio).multiply(displayMatrix());
   ctx.setTransform(matrix); current().annotations.forEach(item => paintAnnotation(ctx, item));
   if (state.tool === 'edit') {
-    ctx.save(); ctx.lineWidth = .7 / state.scale; ctx.strokeStyle = '#9c64e899'; ctx.setLineDash([3 / state.scale, 3 / state.scale]);
+    ctx.save(); ctx.lineWidth = .7 / state.scale; ctx.strokeStyle = '#83d9ff99'; ctx.setLineDash([3 / state.scale, 3 / state.scale]);
     textItems.forEach(item => { if (!current().annotations.some(a => a.type === 'replacement' && a.sourceIndex === item.sourceIndex)) ctx.strokeRect(item.x - 2, item.y - 2, item.w + 4, item.h + 4); });
     ctx.restore();
   }
   if (state.selected) {
     const selected = current().annotations.find(item => item.id === state.selected);
-    if (selected) { const box = annotationBounds(selected); ctx.save(); ctx.lineWidth = 1.5 / state.scale; ctx.setLineDash([5 / state.scale, 4 / state.scale]); ctx.strokeStyle = '#8860d9'; ctx.strokeRect(box.x - 4, box.y - 4, box.w + 8, box.h + 8); ctx.restore(); }
+    if (selected) { const box = annotationBounds(selected); ctx.save(); ctx.lineWidth = 1.5 / state.scale; ctx.setLineDash([5 / state.scale, 4 / state.scale]); ctx.strokeStyle = '#3275e6'; ctx.strokeRect(box.x - 4, box.y - 4, box.w + 8, box.h + 8); ctx.restore(); }
   }
 }
 function pointerPosition(event) {
@@ -417,7 +417,7 @@ async function createDemo() {
         page.drawText(description, { x: 91, y: y - 28, size: 11, font, color: muted });
         page.drawLine({ start: { x: 91, y: y - 51 }, end: { x: 540, y: y - 51 }, thickness: .6, color: rgb(.87, .86, .9) });
       });
-      page.drawText('De la famille Pixo. Pensé pour vos documents.', { x: 53, y: 55, size: 9, font, color: muted });
+      page.drawText('Un outil NEXO. Pensé pour vos documents.', { x: 53, y: 55, size: 9, font, color: muted });
       page.drawText(`0${i + 1}`, { x: 523, y: 55, size: 10, font: bold, color: violet });
     }
     await loadBytes(await doc.save(), 'Les bonnes idées.pdf');
