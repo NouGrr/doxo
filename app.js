@@ -48,6 +48,15 @@ function updateControls() {
   $('saveState').textContent = state.dirty ? 'Modifications à exporter' : hasDocument ? 'Prêt à exporter · 100 % local' : 'Sans compte. Sans envoi.';
   $('canvasHint').textContent = hasDocument ? hints[state.tool] : 'Un espace pour vos idées';
   $('selectionPanel').hidden = !state.selected;
+  const selected = current()?.annotations.find(item => item.id === state.selected);
+  const editingSelectedText = state.tool === 'select' && ['text', 'replacement'].includes(selected?.type);
+  const editingReplacement = state.tool === 'edit' || editingSelectedText && selected.type === 'replacement';
+  $('selectPanel').hidden = state.tool !== 'select' || editingSelectedText;
+  $('textPanel').hidden = !['text', 'edit'].includes(state.tool) && !editingSelectedText;
+  $('colorPanel').hidden = !['edit', 'text', 'draw', 'highlight', 'rectangle'].includes(state.tool) && !editingSelectedText;
+  $('applyText').hidden = !editingReplacement;
+  $('backgroundLabel').hidden = !editingReplacement;
+  $('textHelp').textContent = editingReplacement ? 'Cliquez sur un bloc encadré, modifiez son texte puis cliquez sur Appliquer. Le fond est repris automatiquement : ajustez-le au besoin. Les pages modifiées sont aplaties à l’export. Les scans nécessitent un OCR pour détecter leur texte.' : editingSelectedText ? 'Modifiez le texte ici ou faites glisser la zone sur la page pour la déplacer.' : 'Cliquez sur la page pour ajouter votre texte.';
   $('welcome').hidden = hasDocument; $('pageFrame').hidden = !hasDocument;
 }
 function setTool(tool) {
@@ -55,10 +64,6 @@ function setTool(tool) {
   document.querySelectorAll('[data-tool]').forEach(button => { const active = button.dataset.tool === tool; button.classList.toggle('active', active); button.setAttribute('aria-pressed', active); });
   $('panelTitle').textContent = titles[tool];
   ['select', 'text', 'draw', 'image'].forEach(name => { $(`${name}Panel`).hidden = !(name === tool || name === 'text' && tool === 'edit' || name === 'draw' && ['highlight', 'rectangle'].includes(tool)); });
-  $('textHelp').textContent = tool === 'edit' ? 'Cliquez sur un bloc encadré, modifiez son texte puis cliquez sur Appliquer. Le fond est repris automatiquement : ajustez-le au besoin. Les pages modifiées sont aplaties à l’export. Les scans nécessitent un OCR pour détecter leur texte.' : 'Cliquez sur la page pour ajouter votre texte.';
-  $('applyText').hidden = tool !== 'edit';
-  $('backgroundLabel').hidden = tool !== 'edit';
-  $('colorPanel').hidden = !['edit', 'text', 'draw', 'highlight', 'rectangle'].includes(tool);
   $('drawingTitle').textContent = tool === 'highlight' ? 'Surlignage' : tool === 'rectangle' ? 'Rectangle' : 'Dessin libre';
   $('drawingHelp').textContent = tool === 'highlight' ? 'Tracez une zone pour la surligner en transparence.' : tool === 'rectangle' ? 'Tracez un rectangle pour encadrer un passage.' : 'Cliquez et faites glisser sur la page pour dessiner.';
   $('strokeSize').disabled = tool === 'highlight';
@@ -272,7 +277,7 @@ function onPointerDown(event) {
   } else if (state.tool === 'text') {
     const text = $('textInput').value.trim(); if (!text) return notify('Saisissez d’abord votre texte dans le panneau.');
     checkpoint(); const item = { id: crypto.randomUUID(), type: 'text', text, x: point.x, y: point.y, size: +$('fontSize').value, bold: $('bold').checked, color: $('color').value };
-    model.annotations.push(item); selectAnnotation(item); changed(); renderThumbnails();
+    model.annotations.push(item); selectAnnotation(item); setTool('select'); changed(); renderThumbnails();
   } else if (state.tool === 'image') {
     if (!state.image) { $('imageInput').click(); return; }
     checkpoint(); const w = +$('imageWidth').value; const item = { id: crypto.randomUUID(), type: 'image', x: point.x, y: point.y, w, h: w * state.image.height / state.image.width, data: state.image.data };
